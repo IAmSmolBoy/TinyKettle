@@ -1,0 +1,53 @@
+# ============================================================
+# Voice Assistant Configuration
+# Edit this file to customize the assistant's brain, ears, and voice.
+# ============================================================
+
+ollama:
+  host: "http://localhost:11434"   # Ollama server address
+  model: "llama3.1:8b"                  # Any model you've pulled: `ollama pull <model>`
+  system_prompt: "Do not use *. Add possible follow-up actions at the end of each response."
+  summarise_prompt: >
+    "Summarize the key facts, preferences, decisions, and unresolved topics "
+    "from the conversation below in 3-6 short bullet points. Write it as "
+    "notes for your own future reference, not a recap addressed to the user. "
+    "Skip small talk and pleasantries - only keep information worth "
+    "remembering for later conversations. Output as json in the template "
+    "{"title": <title>, "summary": [<Each bullet point>]}\n\n"
+    "Conversation:\n{transcript}"
+  # system_prompt: >
+  #   You are a warm, concise voice assistant. Keep replies short and
+  #   conversational (1-3 sentences) since they will be spoken aloud.
+  #   Avoid lists, markdown, or long explanations unless asked for detail.
+  temperature: 0.7
+  keep_history: true               # remember prior turns in this session
+  max_history_turns: 10            # trim history beyond this to save context
+
+
+stt:
+  model_size: "base"               # tiny, base, small, medium, large-v3
+  device: "cpu"                    # cpu or cuda
+  compute_type: "int16"             # int8 (fast, cpu-friendly) or float16 (gpu)
+  language: "en"                   # e.g. "en" to force a language, null = auto-detect
+
+tts:
+  # Download a voice from https://github.com/rhasspy/piper/blob/master/VOICES.md
+  # and point these at the .onnx and .onnx.json files.
+  voice_model: "voices/en_US-amy-medium.onnx"
+  voice_config: "voices/en_US-amy-medium.onnx.json"
+  speaking_rate: 5.0                # 1.0 = normal, >1 = faster, <1 = slower
+  volume: 0.2
+
+ptt:
+  hotkey: "a"                       # key to hold for push-to-talk
+  exit_hotkey: "end"                # key to exit the program
+  # auto_start: true                  # start listening immediately on launch
+  # auto_stop: true                   # stop listening when the hotkey is released
+
+audio:
+  sample_rate: 16000
+  input_channels: 1
+  vad_aggressiveness: 2             # 0-3, higher = more aggressive filtering of non-speech
+  silence_duration_sec: 0.9         # seconds of silence that ends your turn
+  max_turn_seconds: 30              # safety cap on a single recording
+  wake_phrase: null                 # e.g. "hey computer" - null disables wake-word gating
