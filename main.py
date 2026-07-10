@@ -1,5 +1,5 @@
 """
-Offline voice assistant: mic -> Whisper -> Ollama -> Piper -> speaker.
+Offline voice assistant: MicRecorder -> Whisper -> Ollama -> Piper -> play_audio.
 
 Usage:
     python main.py
@@ -14,7 +14,7 @@ import traceback
 from components.audio_io import MicRecorder, play_audio
 from components.stt import Transcriber
 from components.llm import OllamaChat
-from components.tts import Speaker
+from components.tts import Voice
 from components.ptt import keyboard_listener
 
 
@@ -25,33 +25,18 @@ def load_config(path):
 
 def build_components(cfg):
     transcriber = Transcriber(
-        model_size=cfg["stt"]["model_size"],
-        device=cfg["stt"]["device"],
-        compute_type=cfg["stt"]["compute_type"],
-        language=cfg["stt"]["language"],
+        **cfg["stt"],
     )
     chat = OllamaChat(
-        host=cfg["ollama"]["host"],
-        model=cfg["ollama"]["model"],
-        system_prompt=cfg["ollama"]["system_prompt"],
-        summary_prompt=cfg["ollama"]["summarise_prompt"],
-        temperature=cfg["ollama"]["temperature"],
-        keep_history=cfg["ollama"]["keep_history"],
-        max_history_turns=cfg["ollama"]["max_history_turns"],
+        **cfg["ollama"]
     )
-    speaker = Speaker(
-        voice_model_path=cfg["tts"]["voice_model"],
-        voice_config_path=cfg["tts"]["voice_config"],
-        speaking_rate=cfg["tts"]["speaking_rate"],
-        volume=cfg["tts"]["volume"]
+    voice = Voice(
+        **cfg["tts"]
     )
     recorder = MicRecorder(
-        sample_rate=cfg["audio"]["sample_rate"],
-        vad_aggressiveness=cfg["audio"]["vad_aggressiveness"],
-        silence_duration_sec=cfg["audio"]["silence_duration_sec"],
-        max_turn_seconds=cfg["audio"]["max_turn_seconds"],
+        **cfg["mic"]
     )
-    return recorder, transcriber, chat, speaker
+    return recorder, transcriber, chat, voice
 
 def print_stack(e):
         
@@ -63,7 +48,7 @@ def print_stack(e):
     while tb.tb_next:
         tb = tb.tb_next
 
-def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: OllamaChat, speaker: Speaker):
+def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: OllamaChat, voice: Voice):
     
     try:
 
@@ -81,7 +66,7 @@ def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: Ollam
         
         reply_formatted = re.sub(r"\*{1,2}(.*?)\*{1,2}", r'\1', reply_text)
         
-        wav_audio, sr = speaker.synthesize(reply_formatted)
+        wav_audio, sr = voice.synthesize(reply_formatted)
         play_audio(wav_audio, sr)
         
     except Exception as e:
@@ -95,12 +80,12 @@ def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: Ollam
 
 
 def run_voice_loop(cfg):
-    recorder, transcriber, chat, speaker = build_components(cfg)
+    recorder, transcriber, chat, voice = build_components(cfg)
     print(f"Ready. Model: {cfg['ollama']['model']} | esc to quit.\n")
     
     keyboard_listener(
         ptt_config=cfg["ptt"],
-        callback=lambda : start_listening(recorder, transcriber, chat, speaker)
+        callback=lambda : start_listening(recorder, transcriber, chat, voice)
     )
 
 

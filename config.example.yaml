@@ -7,14 +7,6 @@ ollama:
   host: "http://localhost:11434"   # Ollama server address
   model: "llama3.1:8b"                  # Any model you've pulled: `ollama pull <model>`
   system_prompt: "Do not use *. Add possible follow-up actions at the end of each response."
-  summarise_prompt: >
-    "Summarize the key facts, preferences, decisions, and unresolved topics "
-    "from the conversation below in 3-6 short bullet points. Write it as "
-    "notes for your own future reference, not a recap addressed to the user. "
-    "Skip small talk and pleasantries - only keep information worth "
-    "remembering for later conversations. Output strictly only json in the template "
-    "{{"title": <title>, "summary": [<Each bullet point>]}}\n\n"
-    "Conversation:\n{transcript}"
   # system_prompt: >
   #   You are a warm, concise voice assistant. Keep replies short and
   #   conversational (1-3 sentences) since they will be spoken aloud.
@@ -22,6 +14,17 @@ ollama:
   temperature: 0.7
   keep_history: true               # remember prior turns in this session
   max_history_turns: 10            # trim history beyond this to save context
+  summary_prompt: >
+    "Summarize the key facts, preferences, decisions, and unresolved topics "
+    "from the conversation below in 3-6 short bullet points. Write it as "
+    "notes for your own future reference, not a recap addressed to the user. "
+    "Skip small talk and pleasantries - only keep information worth "
+    "remembering for later conversations. Output micjson in the template "
+    "{{"title": <title>, "summary": [<Each bullet point>]}}\n\n"
+    "Conversation:\n{transcript}"
+  chats_folder:
+  memory_file:
+  max_memories:
 
 
 stt:
@@ -44,7 +47,7 @@ ptt:
   # auto_start: true                  # start listening immediately on launch
   # auto_stop: true                   # stop listening when the hotkey is released
 
-audio:
+mic:
   sample_rate: 16000
   input_channels: 1
   vad_aggressiveness: 2             # 0-3, higher = more aggressive filtering of non-speech
