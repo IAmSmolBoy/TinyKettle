@@ -5,6 +5,8 @@ Include
 Lib
 Scripts
 
+chats
+
 history.json
 memory.json
 config.yaml

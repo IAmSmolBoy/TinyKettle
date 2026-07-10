@@ -7,8 +7,8 @@ from piper.config import SynthesisConfig
 
 
 class Voice:
-    def __init__(self, voice_model_path, voice_config_path, speaking_rate=1.0, volume=1.0):
-        self.voice = PiperVoice.load(voice_model_path, config_path=voice_config_path)
+    def __init__(self, voice_model, voice_config, speaking_rate=1.0, volume=1.0):
+        self.voice = PiperVoice.load(voice_model, config_path=voice_config)
         self.sample_rate = self.voice.config.sample_rate
         
         self.syn_config = SynthesisConfig(

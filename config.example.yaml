@@ -22,9 +22,9 @@ ollama:
     "remembering for later conversations. Output micjson in the template "
     "{{"title": <title>, "summary": [<Each bullet point>]}}\n\n"
     "Conversation:\n{transcript}"
-  chats_folder:
-  memory_file:
-  max_memories:
+  chats_folder: chats
+  # memory_file: 
+  # max_memories: 
 
 
 stt:
@@ -49,8 +49,6 @@ ptt:
 
 mic:
   sample_rate: 16000
-  input_channels: 1
   vad_aggressiveness: 2             # 0-3, higher = more aggressive filtering of non-speech
   silence_duration_sec: 0.9         # seconds of silence that ends your turn
   max_turn_seconds: 30              # safety cap on a single recording
-  wake_phrase: null                 # e.g. "hey computer" - null disables wake-word gating
