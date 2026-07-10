@@ -2,6 +2,7 @@
 import requests
 import json
 import os
+import re
 from datetime import datetime
 from threading import Thread
 
@@ -50,7 +51,7 @@ class OllamaChat:
         `history` is a list of {"role": "user"/"assistant", "content": str}.
         """
         transcript = self._format_transcript(self.history)
-        prompt = self.summary_prompt_template.format(transcript=transcript)
+        prompt = self.summary_prompt.format(transcript=transcript)
 
         resp = requests.post(
             f"{self.host}/api/generate",
@@ -177,11 +178,11 @@ class OllamaChat:
             
             if len(self.history) >= self.max_history_turns * 2:
                 summary = self.summarize_and_store()
-                decoded = json.loads(summary)
+                summ_obj = re.search(r"(\{.*\}|\[.*\])", summary, re.DOTALL)
+                decoded = json.loads(summ_obj.group(1))
+                
                 messages = self.setup_chat()
-                messages.append({"role": "system", "content": "Conversation history: " + decoded["summary"]})
+                messages.append({"role": "system", "content": "Conversation history: " + "\n* ".join(decoded["summary"])})
                 self.history = messages
-                print(summary, " <- summary")
-            # self._trim_history()
 
         return reply_text

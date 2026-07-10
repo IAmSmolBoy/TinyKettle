@@ -12,8 +12,8 @@ ollama:
     "from the conversation below in 3-6 short bullet points. Write it as "
     "notes for your own future reference, not a recap addressed to the user. "
     "Skip small talk and pleasantries - only keep information worth "
-    "remembering for later conversations. Output as json in the template "
-    "{"title": <title>, "summary": [<Each bullet point>]}\n\n"
+    "remembering for later conversations. Output strictly only json in the template "
+    "{{"title": <title>, "summary": [<Each bullet point>]}}\n\n"
     "Conversation:\n{transcript}"
   # system_prompt: >
   #   You are a warm, concise voice assistant. Keep replies short and
@@ -35,11 +35,11 @@ tts:
   # and point these at the .onnx and .onnx.json files.
   voice_model: "voices/en_US-amy-medium.onnx"
   voice_config: "voices/en_US-amy-medium.onnx.json"
-  speaking_rate: 5.0                # 1.0 = normal, >1 = faster, <1 = slower
+  speaking_rate: 2.0                # 1.0 = normal, >1 = faster, <1 = slower
   volume: 0.2
 
 ptt:
-  hotkey: "a"                       # key to hold for push-to-talk
+  hotkey: "v"                       # key to hold for push-to-talk
   exit_hotkey: "end"                # key to exit the program
   # auto_start: true                  # start listening immediately on launch
   # auto_stop: true                   # stop listening when the hotkey is released
