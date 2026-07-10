@@ -8,6 +8,7 @@ Usage:
 """
 import argparse
 import yaml
+import traceback
 
 from components.audio_io import MicRecorder, play_audio
 from components.stt import Transcriber
@@ -51,6 +52,16 @@ def build_components(cfg):
     )
     return recorder, transcriber, chat, speaker
 
+def print_stack(e):
+        
+    # 1. Print the standard full error message (traceback)
+    traceback.print_exc()
+    
+    # 2. Extract just the line number as an integer
+    tb = e.__traceback__
+    while tb.tb_next:
+        tb = tb.tb_next
+
 def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: OllamaChat, speaker: Speaker):
     
     try:
@@ -70,10 +81,14 @@ def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: Ollam
         wav_audio, sr = speaker.synthesize(reply_text)
         play_audio(wav_audio, sr)
         
-    except:
-        print("Something went wrong")
+    except Exception as e:
+        
+        print_stack(e)
+        
         with open("history.json", "w") as f:
             f.write(str(chat.history))
+            
+        exit(0)
 
 
 def run_voice_loop(cfg):
