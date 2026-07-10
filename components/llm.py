@@ -126,7 +126,7 @@ class OllamaChat:
         
         return msgs
     
-    def parse_req(self, messages, stream_callback=None):
+    def parse_req(self, messages):
 
         resp = requests.post(
             f"{self.host}/api/chat",
@@ -143,22 +143,27 @@ class OllamaChat:
 
         full_reply = []
         for line in resp.iter_lines():
+            
             if not line:
                 continue
+            
             chunk = json.loads(line)
             piece = chunk.get("message", {}).get("content", "")
             if piece:
+                
+                print(piece, end="", flush=True)
+                
                 full_reply.append(piece)
-                if stream_callback:
-                    stream_callback(piece)
+                    
             if chunk.get("done"):
+                print()
                 break
             
         return "".join(full_reply).strip()
 
     # ---------- Chat ----------
 
-    def ask(self, user_text, stream_callback=None):
+    def ask(self, user_text):
         """Sends user_text plus history to Ollama, returns the full reply text.
 
         If stream_callback is given, it's called with each text chunk as it arrives.
@@ -170,7 +175,7 @@ class OllamaChat:
             
         messages.append({"role": "user", "content": user_text})
 
-        reply_text = self.parse_req(messages, stream_callback)
+        reply_text = self.parse_req(messages)
 
         if self.keep_history:
             self.history.append({"role": "user", "content": user_text})

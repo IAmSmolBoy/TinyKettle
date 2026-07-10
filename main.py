@@ -7,6 +7,7 @@ Usage:
     python main.py --text-only     # skip mic/TTS, type/read instead (for testing)
 """
 import argparse
+import re
 import yaml
 import traceback
 
@@ -75,10 +76,12 @@ def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: Ollam
             return
         print(f"You: {user_text}")
 
+        print(f"Assistant:", end=" ")
         reply_text = chat.ask(user_text)
-        print(f"Assistant: {reply_text}\n")
-
-        wav_audio, sr = speaker.synthesize(reply_text)
+        
+        reply_formatted = re.sub(r"\*{1,2}(.*?)\*{1,2}", r'\1', reply_text)
+        
+        wav_audio, sr = speaker.synthesize(reply_formatted)
         play_audio(wav_audio, sr)
         
     except Exception as e:
