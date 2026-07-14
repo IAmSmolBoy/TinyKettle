@@ -48,34 +48,43 @@ def print_stack(e):
         tb = tb.tb_next
 
 def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: OllamaChat, voice: Voice):
-    
     try:
-
+        # Record audio from the microphone
         audio = recorder.record_utterance()
-        if audio is None:
+        if not audio:
             return
 
+        # Transcribe the recorded audio to text
         user_text = transcriber.transcribe(audio)
         if not user_text:
             return
         print(f"You: {user_text}")
 
+        # Prompt for confirmation before proceeding
+        proceed = input("Proceed with this prompt? (Y)").lower()
+        while proceed != "y":
+            user_text = input("Please enter a new prompt? ")
+            if not user_text:
+                continue
+            break
+
+        # Generate and play the AI's response
         print(f"Assistant:", end=" ")
         reply_text = chat.ask(user_text)
-        
-        wav_audio, sr = voice.synthesize(chat._remove_header(reply_text))
+        wav_audio, sr = voice.synthesize(reply_text)
         play_audio(wav_audio, sr)
-        
+
     except Exception as e:
-        
         print_stack(e)
         exit(0)
 
 
 def run_voice_loop(cfg):
+    # Build components based on configuration
     recorder, transcriber, chat, voice = build_components(cfg)
     print(f"Ready. Model: {cfg['ollama']['model']} | {cfg['ptt']["exit_hotkey"]} to quit.\n")
     
+    # Set up a keyboard listener for voice input
     keyboard_listener(
         ptt_config=cfg["ptt"],
         callback=lambda : start_listening(recorder, transcriber, chat, voice)
@@ -85,17 +94,20 @@ def run_voice_loop(cfg):
 def run_text_loop(cfg):
     """Text-only mode: no mic/TTS needed, useful for testing the Ollama connection."""
     
-    chat = OllamaChat(
-        **cfg["ollama"]
-    )
+    # Initialize the chat component
+    chat = OllamaChat(**cfg["ollama"])
     print(f"Text-only mode. Model: {cfg['ollama']['model']} | Ctrl+C to quit.\n")
     
+    # Main loop for text input and response generation
     while True:
         try:
+            
+            # Get user input
             user_text = input("You: ").strip()
             if not user_text:
                 continue
             
+            # Ask AI for response
             reply_text = chat.ask(user_text)
             print(f"Assistant: {reply_text}\n")
             
