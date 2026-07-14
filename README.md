@@ -8,16 +8,15 @@ Mic → VAD auto-stop → faster-whisper (STT) → Ollama (LLM) → Add memories
 
 # Capabilities
 
-- Offline voice assistant pipeline: mic → STT (Whisper) → LLM (Ollama) → TTS (Piper) → speaker  
-- Push-to-talk support via keyboard_listener (PTT)  
-- MicRecorder: VAD, silence detection, max-turn limits, configurable sample rate and VAD aggressiveness  
-- Transcriber: configurable model_size, device, compute_type, language  
-- OllamaChat: system/summarise prompts, temperature, conversation history, max history turns  
-- Speaker (TTS): local voice model + config, adjustable speaking_rate and volume  
-- play_audio helper to output synthesized audio to the speaker  
+- Offline voice assistant pipeline: mic → STT (Whisper) → LLM (Ollama) → TTS (Piper) → speaker
+- Push-to-talk support via keyboard_listener (PTT)
+- MicRecorder: VAD, silence detection, max-turn limits, configurable sample rate and VAD aggressiveness
+- Transcriber: configurable model_size, device, compute_type, language
+- OllamaChat: system/summarise prompts, temperature, conversation history, max history turns
+- Speaker (TTS): local voice model + config, adjustable speaking_rate and volume
+- play_audio helper to output synthesized audio to the speaker
 - Text-only mode to test LLM without mic/TTS
-- YAML-configurable via --config, default config.yaml  
-- Error handling: writes chat history to history.json on exceptions
+- YAML-configurable via --config, default config.yaml
 
 ## 1. Prerequisites
 
@@ -45,11 +44,7 @@ pip install -r requirements.txt
 
 ## 3. Get a Piper voice
 
-```bash
-chmod +x download_voice.sh
-./download_voice.sh
-```
-This grabs a free US-English voice into `voices/`. For other languages/accents,
+Add a free US-English voice into `voices/`. For other languages/accents,
 browse [Piper's voice list](https://github.com/rhasspy/piper/blob/master/VOICES.md)
 and update `tts.voice_model` / `tts.voice_config` in `config.yaml` to match.
 
@@ -84,7 +79,7 @@ python main.py --config my_config.yaml
 
 ## Components
 - **main.py**: The main entry point of the application. It handles command-line arguments, loads the configuration, and runs either the voice or text loop based on user input.
-  
+
 - **components/audio_io.py**: Contains the `MicRecorder` class for recording audio from the microphone and the `play_audio` function for playing audio through the speakers.
 
 - **components/llm.py**: Implements the `OllamaChat` class, which interfaces with the language model, managing conversation history and handling user queries.

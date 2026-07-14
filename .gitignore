@@ -5,10 +5,10 @@ Include
 Lib
 Scripts
 
+test
 chats
 
 history.json
-memory.json
 config.yaml
 pyvenv.cfg
 *.env

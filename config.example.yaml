@@ -13,15 +13,14 @@ ollama:
   #   Avoid lists, markdown, or long explanations unless asked for detail.
   temperature: 0.7
   keep_history: true               # remember prior turns in this session
-  max_history_turns: 10            # trim history beyond this to save context
+  max_msgs: 10            # trim history beyond this to save context
   summary_prompt: >
-    "Summarize the key facts, preferences, decisions, and unresolved topics "
-    "from the conversation below in 3-6 short bullet points. Write it as "
-    "notes for your own future reference, not a recap addressed to the user. "
-    "Skip small talk and pleasantries - only keep information worth "
-    "remembering for later conversations. Output micjson in the template "
-    "{{"title": <title>, "summary": [<Each bullet point>]}}\n\n"
-    "Conversation:\n{transcript}"
+    Summarize the key facts, preferences, decisions, and unresolved topics 
+    from the conversation below in 3-6 short bullet points. Write it as 
+    notes for your own future reference, not a recap addressed to the user. 
+    Skip small talk and pleasantries - only keep information worth 
+    remembering for later conversations.\n\n
+    Conversation:\n{transcript}
   chats_folder: chats
   # memory_file: 
   # max_memories: 
