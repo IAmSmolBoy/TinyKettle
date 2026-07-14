@@ -7,7 +7,6 @@ Usage:
     python main.py --text-only     # skip mic/TTS, type/read instead (for testing)
 """
 import argparse
-import re
 import yaml
 import traceback
 
@@ -64,24 +63,18 @@ def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: Ollam
         print(f"Assistant:", end=" ")
         reply_text = chat.ask(user_text)
         
-        reply_formatted = re.sub(r"\*{1,2}(.*?)\*{1,2}", r'\1', reply_text)
-        
-        wav_audio, sr = voice.synthesize(reply_formatted)
+        wav_audio, sr = voice.synthesize(chat._remove_header(reply_text))
         play_audio(wav_audio, sr)
         
     except Exception as e:
         
         print_stack(e)
-        
-        with open("history.json", "w") as f:
-            f.write(str(chat.history))
-            
         exit(0)
 
 
 def run_voice_loop(cfg):
     recorder, transcriber, chat, voice = build_components(cfg)
-    print(f"Ready. Model: {cfg['ollama']['model']} | esc to quit.\n")
+    print(f"Ready. Model: {cfg['ollama']['model']} | {cfg['ptt']["exit_hotkey"]} to quit.\n")
     
     keyboard_listener(
         ptt_config=cfg["ptt"],
@@ -93,12 +86,7 @@ def run_text_loop(cfg):
     """Text-only mode: no mic/TTS needed, useful for testing the Ollama connection."""
     
     chat = OllamaChat(
-        host=cfg["ollama"]["host"],
-        model=cfg["ollama"]["model"],
-        system_prompt=cfg["ollama"]["system_prompt"],
-        temperature=cfg["ollama"]["temperature"],
-        keep_history=cfg["ollama"]["keep_history"],
-        max_history_turns=cfg["ollama"]["max_history_turns"],
+        **cfg["ollama"]
     )
     print(f"Text-only mode. Model: {cfg['ollama']['model']} | Ctrl+C to quit.\n")
     
