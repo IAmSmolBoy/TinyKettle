@@ -94,9 +94,9 @@ class OllamaChat:
         for msg in self.history:  # Get each message in the chat history
             match msg["role"]:
                 case "user":
-                    print("You:", end="")  # Print 'You:' if the message is from a user
+                    print("You: ", end="")  # Print 'You:' if the message is from a user
                 case "assistant":
-                    print("Assistant:", end="")  # Print 'assistant:' if the message is from an assistant
+                    print("Assistant: ", end="")  # Print 'assistant:' if the message is from an assistant
                 case _:
                     print("System:", end="")  # Default to printing as a System message
             print(msg["content"])  # Print the content of the message

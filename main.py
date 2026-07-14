@@ -51,7 +51,7 @@ def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: Ollam
     try:
         # Record audio from the microphone
         audio = recorder.record_utterance()
-        if not audio:
+        if audio is None:
             return
 
         # Transcribe the recorded audio to text
@@ -62,11 +62,32 @@ def start_listening(recorder: MicRecorder, transcriber: Transcriber, chat: Ollam
 
         # Prompt for confirmation before proceeding
         proceed = input("Proceed with this prompt? (Y)").lower()
-        while proceed != "y":
-            user_text = input("Please enter a new prompt? ")
-            if not user_text:
-                continue
-            break
+        while proceed:
+            
+            # If user is satisfied
+            if proceed in ["y", "yes"]:
+                break
+            
+            if proceed in ["n", "no"]:
+                
+                user_text = ""
+                while not user_text:
+            
+                    # Ask for new prompt if user is unsatisfied
+                    user_text = input("Please enter a new prompt: ")
+                    
+                    # If user enters prompt, break
+                    if user_text:
+                        break
+                    
+                    # If prompt str was empty, print error
+                    print("Prompt was empty, ", end="")
+                
+                break
+            
+            proceed = input("Sorry, unknown selection, Proceed with this prompt? (Y)").lower()
+            
+            
 
         # Generate and play the AI's response
         print(f"Assistant:", end=" ")
