@@ -130,7 +130,7 @@ def run_text_loop(cfg):
             
             # Ask AI for response
             reply_text = chat.ask(user_text)
-            print(f"Assistant: {reply_text}\n")
+            # print(f"Assistant: {reply_text}\n")
             
         except (KeyboardInterrupt, EOFError):
             print("\nGoodbye!")
@@ -145,6 +145,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     cfg = load_config(args.config)
+    
     if args.text_only:
         run_text_loop(cfg)
     else:

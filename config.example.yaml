@@ -22,6 +22,7 @@ ollama:
     remembering for later conversations.\n\n
     Conversation:\n{transcript}
   chats_folder: chats
+  max_tool_rounds: 4
   # memory_file: 
   # max_memories: 
 
